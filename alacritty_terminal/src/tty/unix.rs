@@ -143,9 +143,10 @@ fn default_shell_command(pw: &Passwd<'_>) -> Command {
     // -f: Bypasses authentication for the already-logged-in user.
     // -l: Skips changing directory to $HOME and prepending '-' to argv[0].
     // -p: Preserves the environment.
+    // -q: Suppresses "last login" messages.
     //
     // XXX: we use zsh here over sh due to `exec -a`.
-    login_command.args(["-flp", pw.name, "/bin/zsh", "-c", &exec]);
+    login_command.args(["-flpq", pw.name, "/bin/zsh", "-c", &exec]);
     login_command
 }
 
