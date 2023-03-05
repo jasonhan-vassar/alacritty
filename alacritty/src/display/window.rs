@@ -167,7 +167,7 @@ impl Window {
         window.set_ime_allowed(true);
 
         #[cfg(target_os = "macos")]
-        use_srgb_color_space(&window);
+        // use_srgb_color_space(&window);
 
         #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
         if !is_wayland {
