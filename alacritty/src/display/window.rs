@@ -168,7 +168,6 @@ impl Window {
 
         #[cfg(target_os = "macos")]
         // use_srgb_color_space(&window);
-
         #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
         if !is_wayland {
             // On X11, embed the window inside another if the parent ID has been set.
@@ -200,6 +199,16 @@ impl Window {
             wayland_surface,
             scale_factor,
         })
+    }
+
+    #[cfg(target_os = "macos")]
+    pub fn select_previous_tab(&self) {
+        self.window.select_previous_tab();
+    }
+
+    #[cfg(target_os = "macos")]
+    pub fn select_next_tab(&self) {
+        self.window.select_next_tab();
     }
 
     #[inline]

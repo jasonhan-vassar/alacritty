@@ -183,6 +183,12 @@ pub enum Action {
     /// Create a new Alacritty window.
     CreateNewWindow,
 
+    #[cfg(target_os = "macos")]
+    SelectPreviousTab,
+
+    #[cfg(target_os = "macos")]
+    SelectNextTab,
+
     /// Toggle fullscreen.
     ToggleFullscreen,
 
