@@ -279,7 +279,7 @@ impl Window {
             .with_title(&identity.title)
             .with_name(&identity.class.general, &identity.class.instance)
             .with_visible(false)
-            .with_transparent(true)
+            .with_transparent(false)
             .with_decorations(window_config.decorations != Decorations::None)
             .with_maximized(window_config.maximized())
             .with_fullscreen(window_config.fullscreen());
@@ -317,7 +317,7 @@ impl Window {
             .with_title(&identity.title)
             .with_visible(false)
             .with_decorations(window_config.decorations != Decorations::None)
-            .with_transparent(true)
+            .with_transparent(false)
             .with_maximized(window_config.maximized())
             .with_fullscreen(window_config.fullscreen())
             .with_window_icon(icon.ok())
@@ -328,7 +328,7 @@ impl Window {
         let window = WindowBuilder::new()
             .with_title(&identity.title)
             .with_visible(false)
-            .with_transparent(true)
+            .with_transparent(false)
             .with_maximized(window_config.maximized())
             .with_fullscreen(window_config.fullscreen());
 
