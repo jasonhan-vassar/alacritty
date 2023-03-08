@@ -189,6 +189,36 @@ pub enum Action {
     #[cfg(target_os = "macos")]
     SelectNextTab,
 
+    #[cfg(target_os = "macos")]
+    SelectTab0,
+
+    #[cfg(target_os = "macos")]
+    SelectTab1,
+
+    #[cfg(target_os = "macos")]
+    SelectTab2,
+
+    #[cfg(target_os = "macos")]
+    SelectTab3,
+
+    #[cfg(target_os = "macos")]
+    SelectTab4,
+
+    #[cfg(target_os = "macos")]
+    SelectTab5,
+
+    #[cfg(target_os = "macos")]
+    SelectTab6,
+
+    #[cfg(target_os = "macos")]
+    SelectTab7,
+
+    #[cfg(target_os = "macos")]
+    SelectTab8,
+
+    #[cfg(target_os = "macos")]
+    SelectTab9,
+
     /// Toggle fullscreen.
     ToggleFullscreen,
 

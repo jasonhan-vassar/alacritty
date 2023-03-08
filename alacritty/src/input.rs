@@ -86,6 +86,8 @@ pub trait ActionContext<T: EventListener> {
     fn select_previous_tab(&mut self) {}
     #[cfg(target_os = "macos")]
     fn select_next_tab(&mut self) {}
+    #[cfg(target_os = "macos")]
+    fn select_nth_tab(&mut self, _n: usize) {}
     fn change_font_size(&mut self, _delta: f32) {}
     fn reset_font_size(&mut self) {}
     fn pop_message(&mut self) {}
@@ -348,11 +350,31 @@ impl<T: EventListener> Execute<T> for Action {
             Action::ClearLogNotice => ctx.pop_message(),
             Action::SpawnNewInstance => ctx.spawn_new_instance(),
             Action::CreateNewWindow => ctx.create_new_window(),
-            Action::ReceiveChar | Action::None => (),
             #[cfg(target_os = "macos")]
             Action::SelectPreviousTab => ctx.select_previous_tab(),
             #[cfg(target_os = "macos")]
             Action::SelectNextTab => ctx.select_next_tab(),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab0 => ctx.select_nth_tab(0),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab1 => ctx.select_nth_tab(1),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab2 => ctx.select_nth_tab(2),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab3 => ctx.select_nth_tab(3),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab4 => ctx.select_nth_tab(4),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab5 => ctx.select_nth_tab(5),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab6 => ctx.select_nth_tab(6),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab7 => ctx.select_nth_tab(7),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab8 => ctx.select_nth_tab(8),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab9 => ctx.select_nth_tab(9),
+            Action::ReceiveChar | Action::None => (),
         }
     }
 }
