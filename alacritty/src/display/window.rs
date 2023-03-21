@@ -216,6 +216,11 @@ impl Window {
         self.window.select_nth_tab(n);
     }
 
+    #[cfg(target_os = "macos")]
+    pub fn select_last_tab(&self) {
+        self.window.select_last_tab();
+    }
+
     #[inline]
     pub fn raw_window_handle(&self) -> RawWindowHandle {
         self.window.raw_window_handle()
