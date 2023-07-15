@@ -29,8 +29,8 @@ use std::sync::Arc;
 use {
     cocoa::appkit::NSWindowOrderingMode,
     cocoa::base::{id, NO, YES},
-    objc::{msg_send, sel, sel_impl},
     objc::runtime::Object,
+    objc::{msg_send, sel, sel_impl},
     winit::platform::macos::{OptionAsAlt, WindowBuilderExtMacOS, WindowExtMacOS},
 };
 
@@ -307,6 +307,32 @@ impl Window {
                     let _: () = msg_send![tab_group, setSelectedWindow: window];
                 }
             }
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    pub fn select_previous_tab(&self) {
+        let raw_window = match self.raw_window_handle() {
+            RawWindowHandle::AppKit(handle) => handle.ns_window as id,
+            _ => return,
+        };
+
+        unsafe {
+            let tab_group: *const Object = msg_send![raw_window, tabGroup];
+            let _: () = msg_send![tab_group, selectPreviousTab];
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    pub fn select_next_tab(&self) {
+        let raw_window = match self.raw_window_handle() {
+            RawWindowHandle::AppKit(handle) => handle.ns_window as id,
+            _ => return,
+        };
+
+        unsafe {
+            let tab_group: *const Object = msg_send![raw_window, tabGroup];
+            let _: () = msg_send![tab_group, selectNextTab];
         }
     }
 

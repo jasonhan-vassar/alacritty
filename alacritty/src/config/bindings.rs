@@ -217,6 +217,12 @@ pub enum Action {
     #[cfg(target_os = "macos")]
     SelectTab9,
 
+    #[cfg(target_os = "macos")]
+    SelectPreviousTab,
+
+    #[cfg(target_os = "macos")]
+    SelectNextTab,
+
     /// Toggle fullscreen.
     ToggleFullscreen,
 
@@ -642,6 +648,8 @@ pub fn platform_key_bindings() -> Vec<KeyBinding> {
         "7",    ModifiersState::SUPER;                                         Action::SelectTab7;
         "8",    ModifiersState::SUPER;                                         Action::SelectTab8;
         "9",    ModifiersState::SUPER;                                         Action::SelectTab9;
+        "j",    ModifiersState::SUPER;                                         Action::SelectPreviousTab;
+        "k",    ModifiersState::SUPER;                                         Action::SelectNextTab;
         "=",    ModifiersState::SUPER;                                         Action::IncreaseFontSize;
         "+",    ModifiersState::SUPER;                                         Action::IncreaseFontSize;
         "-",    ModifiersState::SUPER;                                         Action::DecreaseFontSize;

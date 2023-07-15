@@ -103,6 +103,10 @@ pub enum EventType {
     CreateWindow(WindowOptions),
     #[cfg(target_os = "macos")]
     SelectTab(usize),
+    #[cfg(target_os = "macos")]
+    SelectPreviousTab,
+    #[cfg(target_os = "macos")]
+    SelectNextTab,
     #[cfg(unix)]
     IpcConfig(IpcConfig),
     BlinkCursor,
@@ -434,6 +438,20 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         let _ = self
             .event_proxy
             .send_event(Event::new(EventType::SelectTab(n), self.display.window.id()));
+    }
+
+    #[cfg(target_os = "macos")]
+    fn select_previous_tab(&mut self) {
+        let _ = self
+            .event_proxy
+            .send_event(Event::new(EventType::SelectPreviousTab, self.display.window.id()));
+    }
+
+    #[cfg(target_os = "macos")]
+    fn select_next_tab(&mut self) {
+        let _ = self
+            .event_proxy
+            .send_event(Event::new(EventType::SelectNextTab, self.display.window.id()));
     }
 
     fn spawn_daemon<I, S>(&self, program: &str, args: I)
@@ -1300,6 +1318,10 @@ impl input::Processor<EventProxy, ActionContext<'_, Notifier, EventProxy>> {
                 },
                 #[cfg(target_os = "macos")]
                 EventType::SelectTab(_) => (),
+                #[cfg(target_os = "macos")]
+                EventType::SelectPreviousTab => (),
+                #[cfg(target_os = "macos")]
+                EventType::SelectNextTab => (),
             },
             WinitEvent::RedrawRequested(_) => *self.ctx.dirty = true,
             WinitEvent::WindowEvent { event, .. } => {
@@ -1523,6 +1545,32 @@ impl Processor {
         Ok(())
     }
 
+    #[cfg(target_os = "macos")]
+    pub fn select_previous_tab_in_window(
+        &mut self,
+        parent_window_id: WindowId,
+    ) -> Result<(), Box<dyn Error>> {
+        let parent_context = match self.windows.get_mut(&parent_window_id) {
+            Some(c) => c,
+            None => return Err("Could not get window context for parent window".into()),
+        };
+        parent_context.display.window.select_previous_tab();
+        Ok(())
+    }
+
+    #[cfg(target_os = "macos")]
+    pub fn select_next_tab_in_window(
+        &mut self,
+        parent_window_id: WindowId,
+    ) -> Result<(), Box<dyn Error>> {
+        let parent_context = match self.windows.get_mut(&parent_window_id) {
+            Some(c) => c,
+            None => return Err("Could not get window context for parent window".into()),
+        };
+        parent_context.display.window.select_next_tab();
+        Ok(())
+    }
+
     /// Run the event loop.
     ///
     /// The result is exit code generate from the loop.
@@ -1689,6 +1737,24 @@ impl Processor {
                 }) => {
                     if let Err(err) = self.select_tab_in_window(n, window_id) {
                         error!("Could not select {} tab: {:?}", n, err);
+                    }
+                },
+                #[cfg(target_os = "macos")]
+                WinitEvent::UserEvent(Event {
+                    payload: EventType::SelectPreviousTab,
+                    window_id: Some(window_id),
+                }) => {
+                    if let Err(err) = self.select_previous_tab_in_window(window_id) {
+                        error!("Could not select previous tab: {:?}", err);
+                    }
+                },
+                #[cfg(target_os = "macos")]
+                WinitEvent::UserEvent(Event {
+                    payload: EventType::SelectNextTab,
+                    window_id: Some(window_id),
+                }) => {
+                    if let Err(err) = self.select_next_tab_in_window(window_id) {
+                        error!("Could not select next tab: {:?}", err);
                     }
                 },
                 // Process events affecting all windows.
