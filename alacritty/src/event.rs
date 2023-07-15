@@ -1342,7 +1342,7 @@ impl input::Processor<EventProxy, ActionContext<'_, Notifier, EventProxy>> {
                     },
                     WindowEvent::DroppedFile(path) => {
                         let path: String = path.to_string_lossy().into();
-                        self.ctx.paste(&(path + " "), true);
+                        self.ctx.paste(&path, true);
                     },
                     WindowEvent::CursorLeft { .. } => {
                         self.ctx.mouse.inside_text_area = false;
