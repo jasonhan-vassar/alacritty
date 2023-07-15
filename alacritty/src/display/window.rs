@@ -27,7 +27,7 @@ use std::sync::Arc;
 
 #[cfg(target_os = "macos")]
 use {
-    cocoa::appkit::NSColorSpace,
+    cocoa::appkit::{NSColorSpace, NSWindowOrderingMode},
     cocoa::base::{id, nil, NO, YES},
     objc::{msg_send, sel, sel_impl},
     winit::platform::macos::{OptionAsAlt, WindowBuilderExtMacOS, WindowExtMacOS},
@@ -265,6 +265,22 @@ impl Window {
         if visible != self.mouse_visible {
             self.mouse_visible = visible;
             self.window.set_cursor_visible(visible);
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    pub fn add_tabbed_window(&self, window: &Window) {
+        let self_raw_window = match self.raw_window_handle() {
+            RawWindowHandle::AppKit(handle) => handle.ns_window as id,
+            _ => return,
+        };
+        let window_raw_window = match window.raw_window_handle() {
+            RawWindowHandle::AppKit(handle) => handle.ns_window as id,
+            _ => return,
+        };
+
+        unsafe {
+            let _: () = msg_send![self_raw_window, addTabbedWindow: window_raw_window ordered: NSWindowOrderingMode::NSWindowAbove];
         }
     }
 

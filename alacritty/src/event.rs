@@ -415,6 +415,18 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
             .send_event(Event::new(EventType::CreateWindow(WindowOptions::default()), None));
     }
 
+    #[cfg(target_os = "macos")]
+    fn create_new_tabbed_window(&mut self) {
+        let mut options = WindowOptions::default();
+        if let Ok(working_directory) = foreground_process_path(self.master_fd, self.shell_pid) {
+            options.terminal_options.working_directory = Some(working_directory);
+        }
+
+        let _ = self
+            .event_proxy
+            .send_event(Event::new(EventType::CreateWindow(options), self.display.window.id()));
+    }
+
     fn spawn_daemon<I, S>(&self, program: &str, args: I)
     where
         I: IntoIterator<Item = S> + Debug + Copy,
@@ -1460,15 +1472,26 @@ impl Processor {
         event_loop: &EventLoopWindowTarget<Event>,
         proxy: EventLoopProxy<Event>,
         options: WindowOptions,
+        window_id: Option<WindowId>,
     ) -> Result<(), Box<dyn Error>> {
-        let window = self.windows.iter().next().as_ref().unwrap().1;
-        let window_context = window.additional(
+        // Try to get the window context of the window that issued the
+        // CreateWindow event because if we are adding the new window
+        // in a tab, we want to add it in the correct parent window.
+        // Otherwise, just get the next context.
+        let parent_window_id = window_id.unwrap_or(unsafe { WindowId::dummy() });
+        let parent_context = match self.windows.get_mut(&parent_window_id) {
+            Some(c) => c,
+            None => self.windows.iter().next().as_ref().unwrap().1,
+        };
+        let window_context = parent_context.additional(
             event_loop,
             proxy,
             self.config.clone(),
             options,
             #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
             self.wayland_event_queue.as_ref(),
+            #[cfg(target_os = "macos")]
+            !window_id.is_none(),
         )?;
 
         self.windows.insert(window_context.id(), window_context);
@@ -1616,8 +1639,10 @@ impl Processor {
                     }
                 },
                 // Create a new terminal window.
+                // If window_id is provided, create it in a tab.
                 WinitEvent::UserEvent(Event {
-                    payload: EventType::CreateWindow(options), ..
+                    payload: EventType::CreateWindow(options),
+                    window_id,
                 }) => {
                     // XXX Ensure that no context is current when creating a new window, otherwise
                     // it may lock the backing buffer of the surface of current context when asking
@@ -1626,7 +1651,9 @@ impl Processor {
                         window_context.display.make_not_current();
                     }
 
-                    if let Err(err) = self.create_window(event_loop, proxy.clone(), options) {
+                    if let Err(err) =
+                        self.create_window(event_loop, proxy.clone(), options, window_id)
+                    {
                         error!("Could not open window: {:?}", err);
                     }
                 },

@@ -185,6 +185,10 @@ pub enum Action {
     /// Create a new Alacritty window.
     CreateNewWindow,
 
+    /// Create a new Alacritty window in a tab.
+    #[cfg(target_os = "macos")]
+    CreateNewTabbedWindow,
+
     /// Toggle fullscreen.
     ToggleFullscreen,
 
@@ -608,6 +612,7 @@ pub fn platform_key_bindings() -> Vec<KeyBinding> {
         "k",    ModifiersState::SUPER, ~BindingMode::VI, ~BindingMode::SEARCH; Action::ClearHistory;
         "v",    ModifiersState::SUPER, ~BindingMode::VI;                       Action::Paste;
         "n",    ModifiersState::SUPER;                                         Action::CreateNewWindow;
+        "t",    ModifiersState::SUPER;                                         Action::CreateNewTabbedWindow;
         "f",    ModifiersState::CONTROL | ModifiersState::SUPER;               Action::ToggleFullscreen;
         "c",    ModifiersState::SUPER;                                         Action::Copy;
         "h",    ModifiersState::SUPER;                                         Action::Hide;

@@ -128,6 +128,7 @@ impl WindowContext {
         options: WindowOptions,
         #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
         wayland_event_queue: Option<&EventQueue>,
+        #[cfg(target_os = "macos")] add_tabbed_window: bool,
     ) -> Result<Self, Box<dyn Error>> {
         // Get any window and take its GL config and display to build a new context.
         let (gl_display, gl_config) = {
@@ -147,6 +148,11 @@ impl WindowContext {
             #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
             gl_config.x11_visual(),
         )?;
+
+        #[cfg(target_os = "macos")]
+        if add_tabbed_window {
+            self.display.window.add_tabbed_window(&window);
+        }
 
         // Create context.
         let raw_window_handle = window.raw_window_handle();
