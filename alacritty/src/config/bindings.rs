@@ -189,6 +189,34 @@ pub enum Action {
     #[cfg(target_os = "macos")]
     CreateNewTabbedWindow,
 
+    /// Select tabs 1-9 on macOS
+    #[cfg(target_os = "macos")]
+    SelectTab1,
+
+    #[cfg(target_os = "macos")]
+    SelectTab2,
+
+    #[cfg(target_os = "macos")]
+    SelectTab3,
+
+    #[cfg(target_os = "macos")]
+    SelectTab4,
+
+    #[cfg(target_os = "macos")]
+    SelectTab5,
+
+    #[cfg(target_os = "macos")]
+    SelectTab6,
+
+    #[cfg(target_os = "macos")]
+    SelectTab7,
+
+    #[cfg(target_os = "macos")]
+    SelectTab8,
+
+    #[cfg(target_os = "macos")]
+    SelectTab9,
+
     /// Toggle fullscreen.
     ToggleFullscreen,
 
@@ -605,6 +633,15 @@ pub fn platform_key_bindings() -> Vec<KeyBinding> {
         "c",    ModifiersState::SUPER, +BindingMode::VI, ~BindingMode::SEARCH; Action::ClearSelection;
         Insert, ModifiersState::SHIFT, ~BindingMode::VI, ~BindingMode::SEARCH; Action::Esc("\x1b[2;2~".into());
         "0",    ModifiersState::SUPER;                                         Action::ResetFontSize;
+        "1",    ModifiersState::SUPER;                                         Action::SelectTab1;
+        "2",    ModifiersState::SUPER;                                         Action::SelectTab2;
+        "3",    ModifiersState::SUPER;                                         Action::SelectTab3;
+        "4",    ModifiersState::SUPER;                                         Action::SelectTab4;
+        "5",    ModifiersState::SUPER;                                         Action::SelectTab5;
+        "6",    ModifiersState::SUPER;                                         Action::SelectTab6;
+        "7",    ModifiersState::SUPER;                                         Action::SelectTab7;
+        "8",    ModifiersState::SUPER;                                         Action::SelectTab8;
+        "9",    ModifiersState::SUPER;                                         Action::SelectTab9;
         "=",    ModifiersState::SUPER;                                         Action::IncreaseFontSize;
         "+",    ModifiersState::SUPER;                                         Action::IncreaseFontSize;
         "-",    ModifiersState::SUPER;                                         Action::DecreaseFontSize;

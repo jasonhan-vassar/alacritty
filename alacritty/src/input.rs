@@ -104,6 +104,8 @@ pub trait ActionContext<T: EventListener> {
     fn create_new_window(&mut self) {}
     #[cfg(target_os = "macos")]
     fn create_new_tabbed_window(&mut self) {}
+    #[cfg(target_os = "macos")]
+    fn select_tab(&mut self, _n: usize) {}
     fn change_font_size(&mut self, _delta: f32) {}
     fn reset_font_size(&mut self) {}
     fn pop_message(&mut self) {}
@@ -372,6 +374,24 @@ impl<T: EventListener> Execute<T> for Action {
             Action::CreateNewWindow => ctx.create_new_window(),
             #[cfg(target_os = "macos")]
             Action::CreateNewTabbedWindow => ctx.create_new_tabbed_window(),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab1 => ctx.select_tab(1),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab2 => ctx.select_tab(2),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab3 => ctx.select_tab(3),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab4 => ctx.select_tab(4),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab5 => ctx.select_tab(5),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab6 => ctx.select_tab(6),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab7 => ctx.select_tab(7),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab8 => ctx.select_tab(8),
+            #[cfg(target_os = "macos")]
+            Action::SelectTab9 => ctx.select_tab(9),
             Action::ReceiveChar | Action::None => (),
         }
     }

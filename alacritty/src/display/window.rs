@@ -30,6 +30,7 @@ use {
     cocoa::appkit::NSWindowOrderingMode,
     cocoa::base::{id, NO, YES},
     objc::{msg_send, sel, sel_impl},
+    objc::runtime::Object,
     winit::platform::macos::{OptionAsAlt, WindowBuilderExtMacOS, WindowExtMacOS},
 };
 
@@ -281,6 +282,31 @@ impl Window {
 
         unsafe {
             let _: () = msg_send![self_raw_window, addTabbedWindow: window_raw_window ordered: NSWindowOrderingMode::NSWindowAbove];
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    pub fn select_tab(&self, n: usize) {
+        let raw_window = match self.raw_window_handle() {
+            RawWindowHandle::AppKit(handle) => handle.ns_window as id,
+            _ => return,
+        };
+
+        unsafe {
+            let tab_group: *const Object = msg_send![raw_window, tabGroup];
+            let windows: *const Object = msg_send![tab_group, windows];
+            let count: usize = msg_send![windows, count];
+            if count > 0 {
+                if count >= n && n < 9 {
+                    let index = n - 1;
+                    let window: *const Object = msg_send![windows, objectAtIndex: index];
+                    let _: () = msg_send![tab_group, setSelectedWindow: window];
+                } else if n == 9 {
+                    let index = count - 1;
+                    let window: *const Object = msg_send![windows, objectAtIndex: index];
+                    let _: () = msg_send![tab_group, setSelectedWindow: window];
+                }
+            }
         }
     }
 

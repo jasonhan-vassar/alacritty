@@ -101,6 +101,8 @@ pub enum EventType {
     Message(Message),
     Scroll(Scroll),
     CreateWindow(WindowOptions),
+    #[cfg(target_os = "macos")]
+    SelectTab(usize),
     #[cfg(unix)]
     IpcConfig(IpcConfig),
     BlinkCursor,
@@ -425,6 +427,13 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         let _ = self
             .event_proxy
             .send_event(Event::new(EventType::CreateWindow(options), self.display.window.id()));
+    }
+
+    #[cfg(target_os = "macos")]
+    fn select_tab(&mut self, n: usize) {
+        let _ = self
+            .event_proxy
+            .send_event(Event::new(EventType::SelectTab(n), self.display.window.id()));
     }
 
     fn spawn_daemon<I, S>(&self, program: &str, args: I)
@@ -1289,6 +1298,8 @@ impl input::Processor<EventProxy, ActionContext<'_, Notifier, EventProxy>> {
                 EventType::IpcConfig(_) => (),
                 EventType::ConfigReload(_) | EventType::CreateWindow(_) | EventType::Message(_) => {
                 },
+                #[cfg(target_os = "macos")]
+                EventType::SelectTab(_) => (),
             },
             WinitEvent::RedrawRequested(_) => *self.ctx.dirty = true,
             WinitEvent::WindowEvent { event, .. } => {
@@ -1498,6 +1509,20 @@ impl Processor {
         Ok(())
     }
 
+    #[cfg(target_os = "macos")]
+    pub fn select_tab_in_window(
+        &mut self,
+        n: usize,
+        parent_window_id: WindowId,
+    ) -> Result<(), Box<dyn Error>> {
+        let parent_context = match self.windows.get_mut(&parent_window_id) {
+            Some(c) => c,
+            None => return Err("Could not get window context for parent window".into()),
+        };
+        parent_context.display.window.select_tab(n);
+        Ok(())
+    }
+
     /// Run the event loop.
     ///
     /// The result is exit code generate from the loop.
@@ -1655,6 +1680,15 @@ impl Processor {
                         self.create_window(event_loop, proxy.clone(), options, window_id)
                     {
                         error!("Could not open window: {:?}", err);
+                    }
+                },
+                #[cfg(target_os = "macos")]
+                WinitEvent::UserEvent(Event {
+                    payload: EventType::SelectTab(n),
+                    window_id: Some(window_id),
+                }) => {
+                    if let Err(err) = self.select_tab_in_window(n, window_id) {
+                        error!("Could not select {} tab: {:?}", n, err);
                     }
                 },
                 // Process events affecting all windows.
