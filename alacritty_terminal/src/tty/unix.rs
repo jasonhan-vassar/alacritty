@@ -181,7 +181,7 @@ fn default_shell_command(shell: &str, user: &str) -> Command {
     // -p: Preserves the environment.
     //
     // XXX: we use zsh here over sh due to `exec -a`.
-    login_command.args(["-flp", user, "/bin/zsh", "-c", &exec]);
+    login_command.args(["-flpq", user, "/bin/zsh", "-c", &exec]);
     login_command
 }
 
