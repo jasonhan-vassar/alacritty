@@ -27,8 +27,8 @@ use std::sync::Arc;
 
 #[cfg(target_os = "macos")]
 use {
-    cocoa::appkit::{NSColorSpace, NSWindowOrderingMode},
-    cocoa::base::{id, nil, NO, YES},
+    cocoa::appkit::NSWindowOrderingMode,
+    cocoa::base::{id, NO, YES},
     objc::{msg_send, sel, sel_impl},
     winit::platform::macos::{OptionAsAlt, WindowBuilderExtMacOS, WindowExtMacOS},
 };
@@ -178,8 +178,8 @@ impl Window {
         // Set initial transparency hint.
         window.set_transparent(config.window_opacity() < 1.);
 
-        #[cfg(target_os = "macos")]
-        use_srgb_color_space(&window);
+        // #[cfg(target_os = "macos")]
+        // use_srgb_color_space(&window);
 
         #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
         if !is_wayland {
@@ -485,17 +485,17 @@ fn x_embed_window(window: &WinitWindow, parent_id: std::os::raw::c_ulong) {
     }
 }
 
-#[cfg(target_os = "macos")]
-fn use_srgb_color_space(window: &WinitWindow) {
-    let raw_window = match window.raw_window_handle() {
-        RawWindowHandle::AppKit(handle) => handle.ns_window as id,
-        _ => return,
-    };
+// #[cfg(target_os = "macos")]
+// fn use_srgb_color_space(window: &WinitWindow) {
+//     let raw_window = match window.raw_window_handle() {
+//         RawWindowHandle::AppKit(handle) => handle.ns_window as id,
+//         _ => return,
+//     };
 
-    unsafe {
-        let _: () = msg_send![raw_window, setColorSpace: NSColorSpace::sRGBColorSpace(nil)];
-    }
-}
+//     unsafe {
+//         let _: () = msg_send![raw_window, setColorSpace: NSColorSpace::sRGBColorSpace(nil)];
+//     }
+// }
 
 #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
 unsafe extern "C" fn xembed_error_handler(_: *mut XDisplay, _: *mut XErrorEvent) -> i32 {
