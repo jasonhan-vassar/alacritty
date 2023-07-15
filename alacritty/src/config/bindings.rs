@@ -653,8 +653,8 @@ pub fn platform_key_bindings() -> Vec<KeyBinding> {
         "=",    ModifiersState::SUPER;                                         Action::IncreaseFontSize;
         "+",    ModifiersState::SUPER;                                         Action::IncreaseFontSize;
         "-",    ModifiersState::SUPER;                                         Action::DecreaseFontSize;
-        "k",    ModifiersState::SUPER, ~BindingMode::VI, ~BindingMode::SEARCH; Action::Esc("\x0c".into());
-        "k",    ModifiersState::SUPER, ~BindingMode::VI, ~BindingMode::SEARCH; Action::ClearHistory;
+        // "k",    ModifiersState::SUPER, ~BindingMode::VI, ~BindingMode::SEARCH; Action::Esc("\x0c".into());
+        // "k",    ModifiersState::SUPER, ~BindingMode::VI, ~BindingMode::SEARCH; Action::ClearHistory;
         "v",    ModifiersState::SUPER, ~BindingMode::VI;                       Action::Paste;
         "n",    ModifiersState::SUPER;                                         Action::CreateNewWindow;
         "t",    ModifiersState::SUPER;                                         Action::CreateNewTabbedWindow;
