@@ -156,7 +156,7 @@ impl Window {
             .with_title(&identity.title)
             .with_theme(config.window.decorations_theme_variant)
             .with_visible(false)
-            .with_transparent(true)
+            .with_transparent(false)
             .with_maximized(config.window.maximized())
             .with_fullscreen(config.window.fullscreen())
             .build(event_loop)?;
